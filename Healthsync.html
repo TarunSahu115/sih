@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PULSE-NET | Comprehensive Emergency Grid</title>
+    <style>
+        :root {
+            --bg-dark: #070b14;
+            --card-dark: #121826;
+            --card-border: #1f2937;
+            --text-main: #f8fafc;
+            --text-sub: #94a3b8;
+            --accent-red: #ef4444;
+            --accent-green: #10b981;
+            --accent-blue: #3b82f6;
+            --accent-amber: #f59e0b;
+            --nav-bg: #0f172a;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', system-ui, sans-serif; }
+
+        body { background-color: var(--bg-dark); color: var(--text-main); display: flex; flex-direction: column; align-items: center; padding-bottom: 80px; }
+
+        /* System Status Ticker */
+        .status-ticker { width: 100%; background: #064e3b; color: #34d399; font-size: 0.75rem; text-align: center; padding: 6px; font-weight: 600; letter-spacing: 1px; }
+
+        /* App Container */
+        .container { width: 100%; max-width: 650px; padding: 15px; }
+
+        /* Header */
+        .header { display: flex; justify-content: space-between; align-items: center; padding: 10px 0 20px 0; }
+        .brand { font-size: 1.4rem; font-weight: 800; display: flex; align-items: center; gap: 8px; }
+        .pulse-dot { width: 10px; height: 10px; background: var(--accent-red); border-radius: 50%; box-shadow: 0 0 10px var(--accent-red); animation: pulse 1s infinite; }
+        .user-profile { width: 35px; height: 35px; background: var(--card-border); border-radius: 50%; display: flex; justify-content: center; align-items: center; font-weight: bold; border: 2px solid var(--accent-blue); }
+
+        /* Bottom Navigation */
+        .bottom-nav { position: fixed; bottom: 0; width: 100%; max-width: 650px; background: var(--nav-bg); display: flex; justify-content: space-around; padding: 12px 10px; border-top: 1px solid var(--card-border); z-index: 100; border-radius: 20px 20px 0 0; }
+        .nav-item { display: flex; flex-direction: column; align-items: center; gap: 4px; color: var(--text-sub); font-size: 0.75rem; background: none; border: none; cursor: pointer; flex: 1; transition: 0.3s; }
+        .nav-item.active { color: var(--accent-blue); }
+        .nav-item.active-sos { color: var(--accent-red); }
+        .nav-icon { font-size: 1.2rem; }
+
+        /* Cards & Layout */
+        .tab-content { display: none; animation: fadeIn 0.3s ease-in-out; }
+        .tab-content.active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        .card { background: var(--card-dark); border: 1px solid var(--card-border); border-radius: 16px; padding: 20px; margin-bottom: 16px; box-shadow: 0 4px 15px rgba(0,0,0,0.2); }
+        h2 { font-size: 1.2rem; margin-bottom: 5px; }
+        h3 { font-size: 1rem; margin-bottom: 5px; color: #e2e8f0; }
+        p { color: var(--text-sub); font-size: 0.85rem; line-height: 1.4; }
+
+        /* Buttons & Inputs */
+        .btn { width: 100%; padding: 14px; border: none; border-radius: 10px; font-weight: 700; font-size: 0.95rem; cursor: pointer; transition: 0.2s; margin-top: 10px; }
+        .btn-red { background: var(--accent-red); color: white; }
+        .btn-blue { background: var(--accent-blue); color: white; }
+        .btn-green { background: var(--accent-green); color: white; }
+        .btn-outline { background: transparent; border: 1px solid var(--card-border); color: var(--text-main); }
+        .btn:hover { opacity: 0.9; }
+
+        input, select { width: 100%; background: #0f172a; border: 1px solid var(--card-border); color: white; padding: 12px; border-radius: 8px; margin: 8px 0 15px 0; outline: none; }
+        
+        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 15px 0; }
+        .badge { padding: 4px 8px; border-radius: 6px; font-size: 0.7rem; font-weight: 700; }
+        
+        /* SOS Specifics */
+        .sos-hero { text-align: center; padding: 30px 10px; }
+        .pulse-btn { width: 150px; height: 150px; border-radius: 50%; background: linear-gradient(135deg, #ef4444, #991b1b); border: none; color: white; font-size: 1.4rem; font-weight: 900; cursor: pointer; box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.4); animation: pulse-ring 2s infinite; margin: 20px auto; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+        @keyframes pulse-ring { 70% { box-shadow: 0 0 0 25px rgba(239, 68, 68, 0); } 100% { box-shadow: 0 0 0 0 transparent; } }
+
+        /* Simulated Map */
+        .mock-map { width: 100%; height: 180px; background: #0f172a; border-radius: 12px; border: 1px solid var(--card-border); position: relative; overflow: hidden; margin: 15px 0; }
+        .map-route { position: absolute; top: 50%; left: 10%; width: 80%; height: 4px; background: rgba(59, 130, 246, 0.3); border-radius: 2px; }
+        .map-progress { position: absolute; top: 0; left: 0; height: 100%; background: var(--accent-blue); width: 0%; transition: width 4s linear; }
+        .map-vehicle { position: absolute; top: -10px; left: 0%; font-size: 1.5rem; transition: left 4s linear; z-index: 10; }
+        .map-dest { position: absolute; top: -12px; right: -5px; font-size: 1.5rem; }
+
+        /* Scanners & Uploads */
+        .upload-zone { border: 2px dashed var(--accent-blue); background: rgba(59, 130, 246, 0.05); padding: 20px; border-radius: 12px; text-align: center; cursor: pointer; }
+        .spinner { width: 30px; height: 30px; border: 3px solid var(--card-border); border-top-color: var(--accent-blue); border-radius: 50%; animation: spin 1s linear infinite; margin: 0 auto 10px auto; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        /* Data tags */
+        .tag-pill { background: #1e293b; padding: 4px 10px; border-radius: 20px; font-size: 0.75rem; color: var(--accent-blue); display: inline-block; margin: 2px; border: 1px solid #334155; }
+    </style>
+</head>
+<body>
+
+    <div class="status-ticker">🟢 ALL EMERGENCY SYSTEMS ONLINE • GPS ACTIVE</div>
+
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <div class="brand"><div class="pulse-dot"></div> PULSE-NET</div>
+            <div class="user-profile">AK</div>
+        </div>
+
+        <!-- ==================== TAB 1: EMERGENCY SOS (UPGRADED FOR BYSTANDER) ==================== -->
+        <div id="tab-sos" class="tab-content active">
+            
+            <!-- Step 1: Start -->
+            <div id="sos-1" class="card sos-hero">
+                <h2>Emergency Triage & Dispatch</h2>
+                <p>AI-driven hospital matching based on live ICU data.</p>
+                <button class="pulse-btn" onclick="nextSosStep('sos-recipient')">
+                    <span style="font-size: 2rem;">🆘</span>
+                    SOS
+                </button>
+            </div>
+
+            <!-- Step 1.5: Who is the emergency for? (NEW) -->
+            <div id="sos-recipient" class="card" style="display: none;">
+                <h2>Who needs help?</h2>
+                <p style="margin-bottom: 15px;">Select the patient profile for this emergency dispatch.</p>
+                <button class="btn btn-blue" onclick="setPatientMode('self')">👤 For Myself (Use My Med-ID)</button>
+                <button class="btn btn-outline" onclick="setPatientMode('bystander')">👥 For Someone Else (Bystander Mode)</button>
+            </div>
+
+            <!-- Step 1.8: Bystander Details (NEW) -->
+            <div id="sos-bystander-form" class="card" style="display: none;">
+                <h2>Victim Details</h2>
+                <p style="margin-bottom: 10px;">Provide basic info to beam to the responding team.</p>
+                
+                <label style="font-size: 0.8rem;">Estimated Age / Demographics</label>
+                <input type="text" id="b-age" placeholder="e.g., Adult male, ~30 yrs">
+                
+                <label style="font-size: 0.8rem;">Known Blood Group (If known)</label>
+                <select id="b-blood">
+                    <option value="Unknown">Unknown / Not Sure</option>
+                    <option value="O+">O+</option>
+                    <option value="O-">O-</option>
+                    <option value="A+">A+</option>
+                    <option value="A-">A-</option>
+                    <option value="B+">B+</option>
+                    <option value="B-">B-</option>
+                    <option value="AB+">AB+</option>
+                    <option value="AB-">AB-</option>
+                </select>
+
+                <button class="btn btn-blue" onclick="proceedToConditionSelect()">Continue to Triage</button>
+            </div>
+
+            <!-- Step 2: Emergency Details -->
+            <div id="sos-2" class="card" style="display: none;">
+                <h2>Identify Emergency</h2>
+                <div class="grid-2">
+                    <button class="btn btn-outline" onclick="selectCondition('Cardiac Arrest')">🫀 Cardiac</button>
+                    <button class="btn btn-outline" onclick="selectCondition('Severe Trauma')">🩸 Trauma</button>
+                    <button class="btn btn-outline" onclick="selectCondition('Stroke')">🧠 Stroke</button>
+                    <button class="btn btn-outline" onclick="selectCondition('Burn / Hazard')">🔥 Burn</button>
+                </div>
+                
+                <div style="text-align: center; margin: 10px 0; color: var(--text-sub);">— OR —</div>
+                
+                <div class="upload-zone" onclick="document.getElementById('photo-input').click()">
+                    <span>📸 AI Camera: Auto-Scan Injury</span>
+                    <input type="file" id="photo-input" style="display: none;" onchange="document.getElementById('ai-btn').style.display='block'">
+                </div>
+                <button id="ai-btn" class="btn btn-blue" style="display: none;" onclick="selectCondition('AI Scan Result: Hemorrhage')">Run AI Triage</button>
+            </div>
+
+            <!-- Step 3: Transport Options -->
+            <div id="sos-3" class="card" style="display: none;">
+                <h2>Select Transport Mode</h2>
+                <p style="margin-bottom: 15px;">How is the patient reaching the hospital?</p>
+                <button class="btn btn-red" onclick="startDispatch('Ambulance')">🚑 Dispatch Ambulance to Location</button>
+                <button class="btn btn-blue" onclick="startDispatch('Self-Drive')">🚗 Assisting / Transporting Patient</button>
+            </div>
+
+            <!-- Step 4: Scanning & Pre-Alert -->
+            <div id="sos-4" class="card" style="display: none; text-align: center;">
+                <div class="spinner"></div>
+                <h2>Analyzing Grid Data...</h2>
+                <p id="scan-text">Scanning 15km radius for ICU & Specialists...</p>
+                <div style="text-align: left; margin-top: 20px; font-size: 0.85rem;" id="scan-log"></div>
+            </div>
+
+            <!-- Step 5: Live Map Navigation -->
+            <div id="sos-5" class="card" style="display: none;">
+                <span class="badge" style="background: rgba(16, 185, 129, 0.2); color: var(--accent-green);">ER PRE-ALERTED</span>
+                <h2 id="final-hosp" style="margin-top: 10px;">Metro Care Trauma Center</h2>
+                <p id="final-trans">Self-Drive • ETA: 6 Mins</p>
+                
+                <div class="mock-map">
+                    <div class="map-route">
+                        <div class="map-progress" id="progress-bar"></div>
+                        <div class="map-vehicle" id="vehicle-icon">🚗</div>
+                        <div class="map-dest">🏥</div>
+                    </div>
+                </div>
+
+                <div style="background: #0f172a; padding: 15px; border-radius: 8px; border: 1px solid var(--accent-blue); margin-top: 15px;">
+                    <h3 id="packet-title" style="color: var(--accent-blue); font-size: 0.9rem;">📡 Patient Packet Transmitted</h3>
+                    <p id="packet-desc" style="font-size: 0.8rem;">Medical ID, Blood Group (O+), and live ETA sent to reception dashboard.</p>
+                </div>
+                <button class="btn btn-green" onclick="location.reload()">Confirm Arrival / Close</button>
+            </div>
+        </div>
+
+        <!-- ==================== TAB 2: MEDICAL ID ==================== -->
+        <div id="tab-id" class="tab-content">
+            <div class="card">
+                <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+                    <div>
+                        <h2>Aarav Kumar</h2>
+                        <p>ID: #PN-8842-IND</p>
+                    </div>
+                    <span style="font-size: 2rem;">🪪</span>
+                </div>
+                <hr style="border: 0; border-top: 1px solid var(--card-border); margin: 15px 0;">
+                
+                <div class="grid-2">
+                    <div>
+                        <p style="font-size: 0.75rem;">Blood Group</p>
+                        <h3 style="color: var(--accent-red);">O+ (Donor)</h3>
+                    </div>
+                    <div>
+                        <p style="font-size: 0.75rem;">Organ Donor</p>
+                        <h3 style="color: var(--accent-green);">Yes</h3>
+                    </div>
+                </div>
+                <div style="margin-top: 15px;">
+                    <p style="font-size: 0.75rem;">Known Allergies</p>
+                    <span class="tag-pill">Penicillin</span>
+                    <span class="tag-pill">Peanuts</span>
+                </div>
+                <div style="margin-top: 15px;">
+                    <p style="font-size: 0.75rem;">Chronic Conditions</p>
+                    <span class="tag-pill">Asthma (Mild)</span>
+                </div>
+                <p style="margin-top: 15px; font-size: 0.75rem; color: var(--text-sub);">* This profile is automatically beamed to the destination hospital during an SOS dispatch.</p>
+            </div>
+        </div>
+
+        <!-- ==================== TAB 3: B2B HOSPITAL GRID ==================== -->
+        <div id="tab-b2b" class="tab-content">
+            <div class="card" style="border-left: 4px solid var(--accent-amber);">
+                <h2>Live Incoming Requests</h2>
+                <p>Nearby hospitals requesting urgent resources.</p>
+                
+                <div style="background: #0f172a; padding: 12px; border-radius: 8px; margin-top: 15px; border: 1px solid var(--card-border);">
+                    <div style="display: flex; justify-content: space-between;">
+                        <strong style="color: white; font-size: 0.9rem;">City General ER</strong>
+                        <span class="badge" style="background: rgba(239, 68, 68, 0.2); color: var(--accent-red);">CRITICAL</span>
+                    </div>
+                    <p style="margin: 8px 0;">Requires: <strong>2 Units AB- Blood</strong></p>
+                    <div class="grid-2" style="margin: 0; gap: 5px;">
+                        <button class="btn btn-green" style="padding: 8px; font-size: 0.8rem;" onclick="alert('Transfer Approved. Dispatching Drone/Courier.')">Accept & Send</button>
+                        <button class="btn btn-outline" style="padding: 8px; font-size: 0.8rem;">Deny</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <h2>Create Resource Request</h2>
+                <label style="font-size: 0.8rem;">Resource Type</label>
+                <select>
+                    <option>Rare Blood Unit (O-, AB-)</option>
+                    <option>ECMO / Ventilator Machine</option>
+                    <option>Organ Transport (Green Corridor)</option>
+                </select>
+                <button class="btn btn-blue" onclick="alert('Network Broadcast Sent to 12 nearby hospitals!')">Broadcast to Grid</button>
+            </div>
+        </div>
+
+        <!-- ==================== TAB 4: PUBLIC SERVICES ==================== -->
+        <div id="tab-public" class="tab-content">
+            <div class="card">
+                <h2>Hospital Directory & Live Status</h2>
+                <input type="text" placeholder="🔍 Search hospitals, doctors, MRI..." style="margin-bottom: 5px;">
+                
+                <!-- Hospital 1 -->
+                <div style="background: #0f172a; padding: 15px; border-radius: 8px; margin-top: 15px; border: 1px solid var(--card-border);">
+                    <div style="display: flex; justify-content: space-between;">
+                        <strong style="color: white; font-size: 1rem;">Metro Care Trauma</strong>
+                        <span style="font-size: 0.8rem; color: var(--text-sub);">2.1 km</span>
+                    </div>
+                    <div style="margin-top: 10px;">
+                        <p style="margin-bottom: 5px; font-size: 0.8rem;">🛏️ Live Beds: <strong style="color: var(--accent-green);">12 Ward, 2 ICU</strong></p>
+                        <p style="margin-bottom: 5px; font-size: 0.8rem;">🩸 Blood Bank: <strong>Adequate Stock</strong></p>
+                        <p style="margin-bottom: 5px; font-size: 0.8rem;">🧪 Facilities: <strong>3T MRI, Cath Lab, Dialysis</strong></p>
+                    </div>
+                    <button class="btn btn-outline" style="padding: 8px; font-size: 0.8rem; margin-top: 10px;">Book Scan / Appointment</button>
+                </div>
+
+                <!-- Hospital 2 -->
+                <div style="background: #0f172a; padding: 15px; border-radius: 8px; margin-top: 15px; border: 1px solid var(--card-border);">
+                    <div style="display: flex; justify-content: space-between;">
+                        <strong style="color: white; font-size: 1rem;">City General Hospital</strong>
+                        <span style="font-size: 0.8rem; color: var(--text-sub);">4.5 km</span>
+                    </div>
+                    <div style="margin-top: 10px;">
+                        <p style="margin-bottom: 5px; font-size: 0.8rem;">🛏️ Live Beds: <strong style="color: var(--accent-red);">0 ICU (Full)</strong></p>
+                        <p style="margin-bottom: 5px; font-size: 0.8rem;">🩸 Blood Bank: <strong style="color: var(--accent-red);">Low on O+</strong></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Bottom Navigation -->
+    <nav class="bottom-nav">
+        <button class="nav-item active active-sos" onclick="switchTab('tab-sos', this)">
+            <span class="nav-icon">🚨</span> SOS
+        </button>
+        <button class="nav-item" onclick="switchTab('tab-id', this)">
+            <span class="nav-icon">🪪</span> Med-ID
+        </button>
+        <button class="nav-item" onclick="switchTab('tab-b2b', this)">
+            <span class="nav-icon">🏥</span> B2B Grid
+        </button>
+        <button class="nav-item" onclick="switchTab('tab-public', this)">
+            <span class="nav-icon">🔍</span> Services
+        </button>
+    </nav>
+
+    <script>
+        let triageCondition = "";
+        let transportMode = "";
+        let patientMode = "self"; // "self" or "bystander"
+        let bystanderData = {};
+
+        // Tab Switching Logic
+        function switchTab(tabId, btn) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.nav-item').forEach(el => {
+                el.classList.remove('active');
+                el.classList.remove('active-sos');
+            });
+            
+            document.getElementById(tabId).classList.add('active');
+            btn.classList.add('active');
+            if(tabId === 'tab-sos') btn.classList.add('active-sos');
+        }
+
+        // SOS Workflow Logic
+        function nextSosStep(stepId) {
+            document.querySelectorAll('#tab-sos > .card').forEach(el => el.style.display = 'none');
+            document.getElementById(stepId).style.display = 'block';
+        }
+
+        function setPatientMode(mode) {
+            patientMode = mode;
+            if (mode === 'self') {
+                nextSosStep('sos-2');
+            } else {
+                nextSosStep('sos-bystander-form');
+            }
+        }
+
+        function proceedToConditionSelect() {
+            bystanderData = {
+                age: document.getElementById('b-age').value || 'Unknown',
+                blood: document.getElementById('b-blood').value
+            };
+            nextSosStep('sos-2');
+        }
+
+        function selectCondition(condition) {
+            triageCondition = condition;
+            nextSosStep('sos-3');
+        }
+
+        function startDispatch(mode) {
+            transportMode = mode;
+            nextSosStep('sos-4');
+            
+            const log = document.getElementById('scan-log');
+            log.innerHTML = `<p style="color:var(--accent-blue)">> Mode: ${patientMode === 'self' ? 'Self-Emergency' : 'Bystander Assistance'}</p>`;
+            log.innerHTML += `<p style="color:var(--accent-blue)">> Triaging: ${triageCondition}</p>`;
+            
+            setTimeout(() => { log.innerHTML += `<p>> City General: Rejected (No ICU)</p>`; }, 1000);
+            setTimeout(() => { log.innerHTML += `<p style="color:var(--accent-green)">> Metro Care: Matched (2 ICU Beds)</p>`; }, 2000);
+            setTimeout(() => { 
+                if(patientMode === 'bystander') {
+                    log.innerHTML += `<p style="color:var(--accent-amber)">> Transmitting Bystander Packet (Age: ${bystanderData.age}, Blood: ${bystanderData.blood})...</p>`;
+                } else {
+                    log.innerHTML += `<p style="color:var(--accent-amber)">> Transmitting User Med-ID Packet...</p>`;
+                }
+            }, 3000);
+            
+            setTimeout(() => { 
+                document.getElementById('final-trans').innerText = `${transportMode} Routing • ETA: 6 Mins`;
+                document.getElementById('vehicle-icon').innerText = transportMode === 'Ambulance' ? '🚑' : '🚗';
+                
+                if(patientMode === 'bystander') {
+                    document.getElementById('packet-title').innerText = "📡 Bystander Assist Packet Transmitted";
+                    document.getElementById('packet-desc').innerText = `Victim details (${bystanderData.age}, Blood: ${bystanderData.blood}) and live location sent to receiving ER.`;
+                }
+
+                nextSosStep('sos-5'); 
+                
+                // Animate Map
+                setTimeout(() => {
+                    document.getElementById('progress-bar').style.width = '100%';
+                    document.getElementById('vehicle-icon').style.left = '90%';
+                }, 500);
+            }, 4500);
+        }
+    </script>
+</body>
+</html>
