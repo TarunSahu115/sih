@@ -1,3 +1,5 @@
+/* style.css - Responsive version for Mobile, Tablet & Laptop */
+
 :root {
     --bg-dark: #070b14;
     --card-dark: #121826;
@@ -11,54 +13,90 @@
     --nav-bg: #0f172a;
 }
 
+/* =========================
+   GLOBAL
+   ========================= */
+
 * {
     box-sizing: border-box;
     margin: 0;
     padding: 0;
-    font-family: 'Inter', system-ui, sans-serif;
+    font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont,
+        "Segoe UI", sans-serif;
+}
+
+html {
+    width: 100%;
+    min-height: 100%;
+    overflow-x: hidden;
+    scroll-behavior: smooth;
 }
 
 body {
+    width: 100%;
+    min-height: 100vh;
     background-color: var(--bg-dark);
     color: var(--text-main);
     display: flex;
     flex-direction: column;
     align-items: center;
-    padding-bottom: 80px;
+    padding-bottom: 90px;
+    overflow-x: hidden;
 }
 
-/* System Status Ticker */
+/* Prevent long text from breaking layout */
+
+h1,
+h2,
+h3,
+h4,
+p,
+span,
+button {
+    overflow-wrap: break-word;
+}
+
+/* =========================
+   TOP STATUS BAR
+   ========================= */
 
 .status-ticker {
     width: 100%;
     background: #064e3b;
     color: #34d399;
-    font-size: 0.75rem;
+    font-size: clamp(0.62rem, 1.8vw, 0.75rem);
     text-align: center;
-    padding: 6px;
+    padding: 7px 10px;
     font-weight: 600;
     letter-spacing: 1px;
+    line-height: 1.3;
 }
 
-/* App Container */
+/* =========================
+   MAIN CONTAINER
+   ========================= */
 
 .container {
     width: 100%;
     max-width: 650px;
     padding: 15px;
+    margin: 0 auto;
 }
 
-/* Header */
+/* =========================
+   HEADER
+   ========================= */
 
 .header {
+    width: 100%;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 10px 0 20px 0;
+    padding: 10px 0 20px;
 }
 
 .brand {
-    font-size: 1.4rem;
+    font-size: clamp(1.15rem, 4vw, 1.4rem);
     font-weight: 800;
     display: flex;
     align-items: center;
@@ -68,15 +106,23 @@ body {
 .pulse-dot {
     width: 10px;
     height: 10px;
+    min-width: 10px;
     background: var(--accent-red);
     border-radius: 50%;
     box-shadow: 0 0 10px var(--accent-red);
     animation: pulse 1s infinite;
 }
 
+@keyframes pulse {
+    50% {
+        opacity: 0.5;
+    }
+}
+
 .user-profile {
-    width: 35px;
-    height: 35px;
+    width: 36px;
+    height: 36px;
+    min-width: 36px;
     background: var(--card-border);
     border-radius: 50%;
     display: flex;
@@ -86,34 +132,57 @@ body {
     border: 2px solid var(--accent-blue);
 }
 
-/* Bottom Navigation */
+/* =========================
+   BOTTOM NAVIGATION
+   ========================= */
 
 .bottom-nav {
     position: fixed;
+    left: 50%;
     bottom: 0;
+    transform: translateX(-50%);
+
     width: 100%;
     max-width: 650px;
-    background: var(--nav-bg);
+
+    background: rgba(15, 23, 42, 0.97);
     display: flex;
     justify-content: space-around;
-    padding: 12px 10px;
+
+    padding: 10px 6px calc(10px + env(safe-area-inset-bottom));
+
     border-top: 1px solid var(--card-border);
-    z-index: 100;
+
+    z-index: 1000;
+
     border-radius: 20px 20px 0 0;
+
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
 }
 
 .nav-item {
+    min-width: 0;
+    min-height: 48px;
+
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 4px;
+    justify-content: center;
+
+    gap: 3px;
+
     color: var(--text-sub);
-    font-size: 0.75rem;
+    font-size: clamp(0.62rem, 2vw, 0.75rem);
+
     background: none;
     border: none;
+
     cursor: pointer;
+
     flex: 1;
-    transition: 0.3s;
+
+    transition: 0.2s;
 }
 
 .nav-item.active {
@@ -124,13 +193,20 @@ body {
     color: var(--accent-red);
 }
 
-.nav-icon {
-    font-size: 1.2rem;
+.nav-item:active {
+    transform: scale(0.95);
 }
 
-/* Cards & Layout */
+.nav-icon {
+    font-size: clamp(1rem, 4vw, 1.2rem);
+}
+
+/* =========================
+   TAB CONTENT
+   ========================= */
 
 .tab-content {
+    width: 100%;
     display: none;
     animation: fadeIn 0.3s ease-in-out;
 }
@@ -142,7 +218,7 @@ body {
 @keyframes fadeIn {
     from {
         opacity: 0;
-        transform: translateY(10px);
+        transform: translateY(8px);
     }
 
     to {
@@ -151,44 +227,75 @@ body {
     }
 }
 
+/* =========================
+   CARD
+   ========================= */
+
 .card {
+    width: 100%;
     background: var(--card-dark);
     border: 1px solid var(--card-border);
     border-radius: 16px;
-    padding: 20px;
+
+    padding: clamp(15px, 4vw, 20px);
+
     margin-bottom: 16px;
+
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+
+    overflow: hidden;
+}
+
+/* =========================
+   TEXT
+   ========================= */
+
+h1,
+h2,
+h3,
+h4 {
+    max-width: 100%;
 }
 
 h2 {
-    font-size: 1.2rem;
+    font-size: clamp(1rem, 4vw, 1.2rem);
     margin-bottom: 5px;
 }
 
 h3 {
-    font-size: 1rem;
+    font-size: clamp(0.9rem, 3vw, 1rem);
     margin-bottom: 5px;
     color: #e2e8f0;
 }
 
 p {
     color: var(--text-sub);
-    font-size: 0.85rem;
-    line-height: 1.4;
+    font-size: clamp(0.78rem, 2.5vw, 0.85rem);
+    line-height: 1.5;
 }
 
-/* Buttons & Inputs */
+/* =========================
+   BUTTONS
+   ========================= */
 
 .btn {
     width: 100%;
-    padding: 14px;
+    min-height: 44px;
+
+    padding: 12px 14px;
+
     border: none;
     border-radius: 10px;
+
     font-weight: 700;
-    font-size: 0.95rem;
+    font-size: clamp(0.82rem, 2.7vw, 0.95rem);
+
     cursor: pointer;
     transition: 0.2s;
+
     margin-top: 10px;
+
+    touch-action: manipulation;
 }
 
 .btn-red {
@@ -216,56 +323,118 @@ p {
     opacity: 0.9;
 }
 
+.btn:active {
+    transform: scale(0.98);
+}
+
+/* =========================
+   INPUT / SELECT
+   ========================= */
+
 input,
 select {
     width: 100%;
+    min-height: 44px;
+
     background: #0f172a;
     border: 1px solid var(--card-border);
+
     color: white;
-    padding: 12px;
+
+    padding: 11px 12px;
+
     border-radius: 8px;
-    margin: 8px 0 15px 0;
+
+    margin: 8px 0 15px;
+
     outline: none;
+
+    font-size: 16px;
+
+    max-width: 100%;
 }
+
+input:focus,
+select:focus {
+    border-color: var(--accent-blue);
+    box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.15);
+}
+
+/* =========================
+   GRID
+   ========================= */
 
 .grid-2 {
     display: grid;
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+
     gap: 10px;
+
     margin: 15px 0;
 }
 
+/* =========================
+   BADGE
+   ========================= */
+
 .badge {
+    display: inline-block;
+
     padding: 4px 8px;
+
     border-radius: 6px;
+
     font-size: 0.7rem;
     font-weight: 700;
 }
 
-/* SOS Specifics */
+/* =========================
+   SOS HERO
+   ========================= */
 
 .sos-hero {
     text-align: center;
-    padding: 30px 10px;
+    padding: clamp(20px, 6vw, 30px) 10px;
 }
 
 .pulse-btn {
-    width: 150px;
-    height: 150px;
+    width: clamp(125px, 40vw, 150px);
+    height: clamp(125px, 40vw, 150px);
+
+    max-width: 80vw;
+    max-height: 80vw;
+
     border-radius: 50%;
-    background: linear-gradient(135deg, #ef4444, #991b1b);
+
+    background: linear-gradient(
+        135deg,
+        #ef4444,
+        #991b1b
+    );
+
     border: none;
+
     color: white;
-    font-size: 1.4rem;
+
+    font-size: clamp(1.1rem, 4vw, 1.4rem);
+
     font-weight: 900;
+
     cursor: pointer;
+
     box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.4);
+
     animation: pulse-ring 2s infinite;
+
     margin: 20px auto;
+
     display: flex;
     flex-direction: column;
+
     align-items: center;
     justify-content: center;
+
+    touch-action: manipulation;
 }
 
 @keyframes pulse-ring {
@@ -278,74 +447,250 @@ select {
     }
 }
 
-/* Simulated Map */
+/* =========================
+   MAP CONTAINER
+   ========================= */
 
-.mock-map {
+.g-nav-container {
     width: 100%;
-    height: 180px;
-    background: #0f172a;
-    border-radius: 12px;
+
+    background: #0b132b;
+
+    border-radius: 14px;
+
     border: 1px solid var(--card-border);
-    position: relative;
+
     overflow: hidden;
+
     margin: 15px 0;
+
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.5);
 }
 
-.map-route {
-    position: absolute;
-    top: 50%;
-    left: 10%;
-    width: 80%;
-    height: 4px;
-    background: rgba(59, 130, 246, 0.3);
-    border-radius: 2px;
+/* =========================
+   TURN BANNER
+   ========================= */
+
+.g-turn-banner {
+    width: 100%;
+
+    background: #111c33;
+
+    padding: 12px 15px;
+
+    display: flex;
+    align-items: center;
+
+    gap: 12px;
+
+    border-bottom: 1px solid #1e293b;
 }
 
-.map-progress {
-    position: absolute;
-    top: 0;
-    left: 0;
+.g-turn-icon {
+    background: #2563eb;
+
+    color: white;
+
+    width: 40px;
+    height: 40px;
+
+    min-width: 40px;
+
+    border-radius: 10px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    font-size: 1.3rem;
+
+    font-weight: bold;
+
+    flex-shrink: 0;
+
+    box-shadow: 0 2px 8px rgba(37, 99, 235, 0.4);
+}
+
+.g-turn-instructions {
+    min-width: 0;
+}
+
+.g-turn-instructions h4 {
+    font-size: clamp(0.8rem, 3vw, 0.95rem);
+    color: #fff;
+}
+
+.g-turn-instructions p {
+    font-size: clamp(0.65rem, 2.5vw, 0.75rem);
+    color: #60a5fa;
+    font-weight: 600;
+}
+
+/* =========================
+   MAP
+   ========================= */
+
+.g-map-viewport {
+    position: relative;
+
+    width: 100%;
+
+    height: clamp(210px, 45vw, 350px);
+
+    background: #090e1a;
+
+    overflow: hidden;
+}
+
+.g-map-viewport svg {
+    width: 100%;
     height: 100%;
-    background: var(--accent-blue);
-    width: 0%;
-    transition: width 4s linear;
+    display: block;
 }
 
-.map-vehicle {
+/* =========================
+   MAP CONTROLS
+   ========================= */
+
+.g-map-controls {
     position: absolute;
-    top: -10px;
-    left: 0%;
-    font-size: 1.5rem;
-    transition: left 4s linear;
-    z-index: 10;
+
+    top: 10px;
+    right: 10px;
+
+    display: flex;
+    flex-direction: column;
+
+    gap: 6px;
+
+    z-index: 20;
 }
 
-.map-dest {
+.g-map-ctrl-btn {
+    width: 32px;
+    height: 32px;
+
+    background: rgba(15, 23, 42, 0.9);
+
+    border: 1px solid rgba(255, 255, 255, 0.15);
+
+    color: #fff;
+
+    border-radius: 6px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    font-size: 0.85rem;
+
+    backdrop-filter: blur(4px);
+
+    cursor: pointer;
+
+    touch-action: manipulation;
+}
+
+/* =========================
+   MAP HUD
+   ========================= */
+
+.g-hud-overlay {
     position: absolute;
-    top: -12px;
-    right: -5px;
-    font-size: 1.5rem;
+
+    bottom: 10px;
+    left: 10px;
+    right: 10px;
+
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    gap: 8px;
+
+    background: rgba(11, 19, 43, 0.92);
+
+    backdrop-filter: blur(8px);
+
+    padding: 9px 12px;
+
+    border-radius: 10px;
+
+    border: 1px solid rgba(255, 255, 255, 0.12);
+
+    z-index: 20;
 }
 
-/* Scanners & Uploads */
+.g-hud-stat {
+    min-width: 0;
+
+    font-size: clamp(0.55rem, 2vw, 0.7rem);
+
+    color: var(--text-sub);
+
+    display: flex;
+    flex-direction: column;
+
+    text-transform: uppercase;
+
+    letter-spacing: 0.5px;
+}
+
+.g-hud-stat span {
+    font-size: clamp(0.72rem, 2.8vw, 0.95rem);
+
+    font-weight: 700;
+
+    color: #fff;
+
+    text-transform: none;
+
+    white-space: nowrap;
+}
+
+/* =========================
+   UPLOAD
+   ========================= */
 
 .upload-zone {
+    width: 100%;
+
     border: 2px dashed var(--accent-blue);
+
     background: rgba(59, 130, 246, 0.05);
-    padding: 20px;
+
+    padding: 20px 10px;
+
     border-radius: 12px;
+
     text-align: center;
+
     cursor: pointer;
+
+    font-size: clamp(0.8rem, 3vw, 0.95rem);
+
+    overflow-wrap: anywhere;
+
+    touch-action: manipulation;
 }
+
+/* =========================
+   SPINNER
+   ========================= */
 
 .spinner {
     width: 30px;
     height: 30px;
+
     border: 3px solid var(--card-border);
+
     border-top-color: var(--accent-blue);
+
     border-radius: 50%;
+
     animation: spin 1s linear infinite;
-    margin: 0 auto 10px auto;
+
+    margin: 0 auto 10px;
 }
 
 @keyframes spin {
@@ -354,15 +699,293 @@ select {
     }
 }
 
-/* Data tags */
+/* =========================
+   TAGS
+   ========================= */
 
 .tag-pill {
     background: #1e293b;
+
     padding: 4px 10px;
+
     border-radius: 20px;
+
     font-size: 0.75rem;
+
     color: var(--accent-blue);
+
     display: inline-block;
+
     margin: 2px;
+
     border: 1px solid #334155;
+}
+
+/* =========================
+   MOBILE
+   320px - 600px
+   ========================= */
+
+@media (max-width: 600px) {
+
+    body {
+        padding-bottom: 85px;
+    }
+
+    .container {
+        padding: 10px;
+    }
+
+    .header {
+        padding: 8px 2px 15px;
+    }
+
+    .card {
+        border-radius: 13px;
+        margin-bottom: 12px;
+    }
+
+    .grid-2 {
+        gap: 8px;
+    }
+
+    .bottom-nav {
+        border-radius: 15px 15px 0 0;
+    }
+
+    .g-map-viewport {
+        height: 230px;
+    }
+
+    .g-hud-overlay {
+        left: 7px;
+        right: 7px;
+        bottom: 7px;
+        padding: 8px;
+    }
+}
+
+/* =========================
+   VERY SMALL MOBILE
+   320px - 374px
+   ========================= */
+
+@media (max-width: 374px) {
+
+    .container {
+        padding: 8px;
+    }
+
+    .grid-2 {
+        grid-template-columns: 1fr;
+    }
+
+    .card {
+        padding: 13px;
+    }
+
+    .bottom-nav {
+        padding-left: 2px;
+        padding-right: 2px;
+    }
+
+    .nav-item {
+        font-size: 0.6rem;
+    }
+
+    .nav-icon {
+        font-size: 0.95rem;
+    }
+
+    .g-map-viewport {
+        height: 210px;
+    }
+
+    .g-hud-overlay {
+        gap: 3px;
+    }
+}
+
+/* =========================
+   TABLET
+   601px - 1024px
+   ========================= */
+
+@media (min-width: 601px) and (max-width: 1024px) {
+
+    .container {
+        max-width: 850px;
+        padding: 22px;
+    }
+
+    .bottom-nav {
+        max-width: 850px;
+    }
+
+    .card {
+        padding: 24px;
+    }
+
+    .g-map-viewport {
+        height: 350px;
+    }
+
+    .pulse-btn {
+        width: 170px;
+        height: 170px;
+    }
+}
+
+/* =========================
+   LAPTOP / DESKTOP
+   1025px+
+   ========================= */
+
+@media (min-width: 1025px) {
+
+    body {
+        padding-bottom: 100px;
+    }
+
+    .container {
+        max-width: 1000px;
+        padding: 25px;
+    }
+
+    .bottom-nav {
+        max-width: 1000px;
+    }
+
+    .card {
+        padding: 25px;
+    }
+
+    .g-map-viewport {
+        height: 400px;
+    }
+
+    .pulse-btn {
+        width: 180px;
+        height: 180px;
+    }
+}
+
+/* =========================
+   LARGE DESKTOP
+   ========================= */
+
+@media (min-width: 1440px) {
+
+    .container {
+        max-width: 1100px;
+    }
+
+    .bottom-nav {
+        max-width: 1100px;
+    }
+
+    .g-map-viewport {
+        height: 450px;
+    }
+}
+
+/* =========================
+   LANDSCAPE MOBILE
+   ========================= */
+
+@media (max-height: 500px) and (orientation: landscape) {
+
+    body {
+        padding-bottom: 70px;
+    }
+
+    .status-ticker {
+        padding: 4px;
+    }
+
+    .header {
+        padding: 5px 0 10px;
+    }
+
+    .card {
+        padding: 12px;
+        margin-bottom: 10px;
+    }
+
+    .pulse-btn {
+        width: 105px;
+        height: 105px;
+        margin: 10px auto;
+    }
+
+    .g-map-viewport {
+        height: 190px;
+    }
+
+    .bottom-nav {
+        padding-top: 5px;
+        padding-bottom: 5px;
+    }
+
+    .nav-item {
+        min-height: 40px;
+    }
+}
+
+/* =========================
+   TOUCH DEVICES
+   ========================= */
+
+@media (hover: none) and (pointer: coarse) {
+
+    button,
+    .btn,
+    .nav-item,
+    .pulse-btn,
+    .upload-zone,
+    .g-map-ctrl-btn {
+        -webkit-tap-highlight-color: transparent;
+    }
+
+    .btn,
+    .nav-item {
+        min-height: 44px;
+    }
+
+    input,
+    select {
+        min-height: 44px;
+        font-size: 16px;
+    }
+}
+
+/* =========================
+   ACCESSIBILITY
+   ========================= */
+
+@media (prefers-reduced-motion: reduce) {
+
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+    }
+}
+
+/* =========================
+   SAFE AREA FOR PHONES
+   ========================= */
+
+@supports (padding: env(safe-area-inset-bottom)) {
+
+    body {
+        padding-bottom: calc(85px + env(safe-area-inset-bottom));
+    }
+
+    .bottom-nav {
+        padding-bottom: calc(10px + env(safe-area-inset-bottom));
+    }
 }
